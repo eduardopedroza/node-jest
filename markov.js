@@ -17,13 +17,54 @@ class MarkovMachine {
    *  {"the": ["cat", "hat"], "cat": ["in"], "in": ["the"], "hat": [null]} */
 
   makeChains() {
-    // TODO
+    this.chain = {}
+    for(let i = 0; i < this.words.length; i++){
+      let word = this.words[i];
+      let nextWord = this.words[i+1] || null;
+
+      if (!this.chain[word]) {
+        this.chain[word] = [];
+      }
+
+      this.chain[word].push(nextWord);
+    }
   }
 
 
   /** return random text from chains */
 
   makeText(numWords = 100) {
-    // TODO
+    if (Object.keys(this.chain).length === 0) {
+      return ''; 
+    }
+
+    let newText = '';
+    let currentWord = this.getRandomKey(this.chain);
+    let wordsCount = 1;
+
+    while (wordsCount < numWords) {
+      const nextWords = this.chain[currentWord];
+      
+      if (nextWords && nextWords.length > 0) {
+        const randomIndex = Math.floor(Math.random() * nextWords.length);
+        const nextWord = nextWords[randomIndex];
+
+        if (nextWord === null) break;
+
+        newText += ' ' + nextWord;
+        currentWord = nextWord;
+        wordsCount++;
+      } else {
+        break;
+      }
+    }
+    return newText;
+  }
+  
+  getRandomKey(obj) {
+    const keys = Object.keys(obj);
+    return keys[Math.floor(Math.random() * keys.length)];
   }
 }
+
+module.exports = {MarkovMachine};
